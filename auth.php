@@ -64,7 +64,7 @@ class auth_plugin_macaroons extends auth_plugin_base {
 	}
 
 	function loginpage_hook() {
-		global $DB;
+		global $DB, $login;
 		$message = "";
 		if(!empty($_COOKIE['das-macaroon'])) {
 			try {
@@ -78,13 +78,13 @@ class auth_plugin_macaroons extends auth_plugin_base {
 
 				if($v->verify($m, "pocsecret")) {
 					$name = explode(";", $m->getIdentifier());
-					$username = join("", $name);
-					$user = authenticate_user_login($username, null);
+					$login = join("", $name);
+					$user = authenticate_user_login($login, null);
 
 					if($user) {
 						$user->firstname = $name[0];
 						$user->lastname = $name[1];
-						$user->email = $username."@brendanabolivier.com";
+						$user->email = $login."@brendanabolivier.com";
 						//	var_dump($user);
 						$DB->update_record('user', $user);
 						complete_user_login($user);
@@ -105,7 +105,11 @@ class auth_plugin_macaroons extends auth_plugin_base {
 	 * @return bool Authentication success or failure.
 	 */
 	function user_login ($username, $password) {
-		return true;
+		global $login;
+		if($login == $username) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -196,6 +200,9 @@ class auth_plugin_macaroons extends auth_plugin_base {
 		return true;
 	}
 
+	function is_synchronised_with_external() {
+		return false;
+	}
 }
 
 
