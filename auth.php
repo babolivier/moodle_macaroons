@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Anobody can login with any password.
+ * Authentication plugin: Macaroons
+ *
+ * Macaroons: Cookies with Contextual Caveats for Decentralized Authorization
  *
  * @package auth_macaroons
  * @author Brendan Abolivier
