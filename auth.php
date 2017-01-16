@@ -68,7 +68,7 @@ class auth_plugin_macaroons extends auth_plugin_base {
 				if($v->verify($m, "pocsecret")) {
 					$name = explode(";", $m->getIdentifier());
 					$username = join("", $name);
-					$user = authenticate_user_login($username, sesskey());
+					$user = authenticate_user_login($username, null);
 
 
 					if($user) {
