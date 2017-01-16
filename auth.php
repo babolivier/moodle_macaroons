@@ -53,8 +53,18 @@ class auth_plugin_macaroons extends auth_plugin_base {
 		$this->authtype = 'macaroons';
 	}
 
+	/**
+	 * Old syntax of class constructor. Deprecated in PHP7.
+	 *
+	 * @deprecated since Moodle 3.1
+	 */
+	public function auth_plugin_macaroons() {
+		debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+		self::__construct();
+	}
+
 	function loginpage_hook() {
-		global $message, $DB;
+		global $DB;
 		$message = "";
 		if(!empty($_COOKIE['das-macaroon'])) {
 			try {
@@ -65,17 +75,17 @@ class auth_plugin_macaroons extends auth_plugin_base {
 						return !strcmp($a, "status = student");
 					}
 				]);
+
 				if($v->verify($m, "pocsecret")) {
 					$name = explode(";", $m->getIdentifier());
 					$username = join("", $name);
 					$user = authenticate_user_login($username, null);
 
-
 					if($user) {
 						$user->firstname = $name[0];
 						$user->lastname = $name[1];
 						$user->email = $username."@brendanabolivier.com";
-//						var_dump($user);
+						//	var_dump($user);
 						$DB->update_record('user', $user);
 						complete_user_login($user);
 					}
@@ -87,16 +97,6 @@ class auth_plugin_macaroons extends auth_plugin_base {
 	}
 
 	/**
-	 * Old syntax of class constructor. Deprecated in PHP7.
-	 *
-	 * @deprecated since Moodle 3.1
-	 */
-	public function auth_plugin_macaroons() {
-		debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-		self::__construct();
-	}
-
-	/**
 	 * Returns true if the username and password work or don't exist and false
 	 * if the user exists and the password is wrong.
 	 *
@@ -105,12 +105,7 @@ class auth_plugin_macaroons extends auth_plugin_base {
 	 * @return bool Authentication success or failure.
 	 */
 	function user_login ($username, $password) {
-		global $message;
-		if(!empty($message)) {
-			return false;
-		} elseif(!empty($_COOKIE['das-macaroon'])) {
-			return true;
-		}
+		return true;
 	}
 
 	/**
