@@ -54,14 +54,11 @@ class auth_plugin_macaroons extends auth_plugin_base {
 	}
 
 	function loginpage_hook() {
-		global $message;
+		global $message, $DB;
 		$message = "";
 		if(!empty($_COOKIE['das-macaroon'])) {
 			try {
 				$m = Macaroon::deserialize($_COOKIE['das-macaroon']);
-				$frm = new stdClass();
-				$frm->username = $m->getIdentifier();
-				$frm->password = 'passwdMacaroons';
 				$v = new Verifier();
 				$v->setCallbacks([
 					function($a) {
@@ -69,14 +66,23 @@ class auth_plugin_macaroons extends auth_plugin_base {
 					}
 				]);
 				if($v->verify($m, "pocsecret")) {
-					$frm = new stdClass();
-					$frm->username = $m->getIdentifier();
-					$frm->password = 'passwdMacaroons';
+					$name = explode(";", $m->getIdentifier());
+					$username = join("", $name);
+					$user = authenticate_user_login($username, sesskey());
+
+
+					if($user) {
+						$user->firstname = $name[0];
+						$user->lastname = $name[1];
+						$user->email = $username."@brendanabolivier.com";
+//						var_dump($user);
+						$DB->update_record('user', $user);
+						complete_user_login($user);
+					}
 				}
 			} catch(Exception $e) {
 				$message = $e->getMessage();
 			}
-			authenticate_user_login($frm->username, sesskey());
 		}
 	}
 
