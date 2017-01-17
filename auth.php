@@ -64,7 +64,7 @@ class auth_plugin_macaroons extends auth_plugin_base {
 	}
 
 	function loginpage_hook() {
-		global $DB, $login;
+		global $DB, $login, $CFG;
 		$message = "";
 		if(!empty($_COOKIE['das-macaroon'])) {
 			try {
@@ -85,9 +85,9 @@ class auth_plugin_macaroons extends auth_plugin_base {
 						$user->firstname = $name[0];
 						$user->lastname = $name[1];
 						$user->email = $login."@brendanabolivier.com";
-						//	var_dump($user);
 						$DB->update_record('user', $user);
 						complete_user_login($user);
+						redirect($CFG->wwwroot);
 					}
 				}
 			} catch(Exception $e) {
