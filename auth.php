@@ -73,9 +73,9 @@ class auth_plugin_macaroons extends auth_plugin_base {
 		global $DB, $login, $CFG;
 		$placeholders[0] = "/{{firstname}}/";
 		$placeholders[1] = "/{{lastname}}/";
-		if(!empty($_COOKIE['das-macaroon'])) {
+		if(!empty($_COOKIE[$this->config->cookie_name])) {
 			try {
-				$m = Macaroon::deserialize($_COOKIE['das-macaroon']);
+				$m = Macaroon::deserialize($_COOKIE[$this->config->cookie_name]);
 				$v = new Verifier();
 				$v->setCallbacks([
 					function($a) {
@@ -205,15 +205,19 @@ class auth_plugin_macaroons extends auth_plugin_base {
 	 * Processes and stores configuration data for this authentication plugin.
 	 */
 	function process_config($config) {
-		if(!isset($config->email_config)) {
-			$config->email_config = '';
+		if(!isset($config->cookie_name)) {
+			$config->cookie_name = '';
 		}
 		if(!isset($config->secret)) {
 			$config->secret = '';
 		}
+		if(!isset($config->email_config)) {
+			$config->email_config = '';
+		}
 
-		set_config('email_config', $config->email_config, self::COMPONENT_NAME);
+		set_config('cookie_name', $config->cookie_name, self::COMPONENT_NAME);
 		set_config('secret', $config->secret, self::COMPONENT_NAME);
+		set_config('email_config', $config->email_config, self::COMPONENT_NAME);
 		return true;
 	}
 

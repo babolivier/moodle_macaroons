@@ -1,9 +1,12 @@
 <?php
-	if(!isset($config->email_config)) {
-		$config->email_config = '';
+	if(!isset($config->cookie_name)) {
+		$config->cookie_name = '';
 	}
 	if(!isset($config->secret)) {
 		$config->secret = '';
+	}
+	if(!isset($config->email_config)) {
+		$config->email_config = '';
 	}
 ?>
 <table cellspacing="0" cellpadding="5" border="0">
@@ -11,6 +14,15 @@
 		<td colspan="3">
 			<h3>Macaroons configuration</h3>
 		</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<label for="cookie_name">Cookie name</label>
+		</td>
+		<td>
+			<input name="cookie_name" id="cookie_name" type="text" size="50" value="<?php echo $config->cookie_name; ?>" />
+		</td>
+		<td>Name of the cookie your macaroon is located in.</td>
 	</tr>
 	<tr>
 		<td align="right">
