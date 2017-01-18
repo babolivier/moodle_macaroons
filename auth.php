@@ -69,6 +69,11 @@ class auth_plugin_macaroons extends auth_plugin_base {
 		self::__construct();
 	}
 
+	/* Login page hook
+	*
+	* Called before displaying the login form, is used to authenticate the user
+	* and bypass the form.
+	*/
 	function loginpage_hook() {
 		global $DB, $login, $CFG;
 		$placeholders[0] = "/{{firstname}}/";
