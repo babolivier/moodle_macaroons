@@ -46,11 +46,17 @@ use Macaroons\Verifier;
  */
 class auth_plugin_macaroons extends auth_plugin_base {
 
+	/*
+	* The name of the component. Used by the configuration.
+	*/
+	const COMPONENT_NAME = 'auth_macaroons';
+
 	/**
 	 * Constructor.
 	 */
 	public function __construct() {
 		$this->authtype = 'macaroons';
+		$this->config = get_config(self::COMPONENT_NAME);
 	}
 
 	/**
@@ -65,7 +71,8 @@ class auth_plugin_macaroons extends auth_plugin_base {
 
 	function loginpage_hook() {
 		global $DB, $login, $CFG;
-		$message = "";
+		$placeholders[0] = "/{{firstname}}/";
+		$placeholders[1] = "/{{lastname}}/";
 		if(!empty($_COOKIE['das-macaroon'])) {
 			try {
 				$m = Macaroon::deserialize($_COOKIE['das-macaroon']);
@@ -84,8 +91,9 @@ class auth_plugin_macaroons extends auth_plugin_base {
 					if($user) {
 						$user->firstname = $name[0];
 						$user->lastname = $name[1];
-						$user->email = $login."@brendanabolivier.com";
+						$user->email = preg_replace($placeholders, $name, $this->config->email_config);
 						$DB->update_record('user', $user);
+						
 						complete_user_login($user);
 						redirect($CFG->wwwroot);
 					}
@@ -188,15 +196,20 @@ class auth_plugin_macaroons extends auth_plugin_base {
 	 * a form for configuring this plugin.
 	 *
 	 * @param array $page An object containing all the data for this page.
+	 */
 	function config_form($config, $err, $user_fields) {
 		include "config.html";
 	}
-	 */
 
 	/**
 	 * Processes and stores configuration data for this authentication plugin.
 	 */
 	function process_config($config) {
+		if(!isset($config->email_config)) {
+			$config->email_config = '';
+		}
+
+		set_config('email_config', $config->email_config, self::COMPONENT_NAME);
 		return true;
 	}
 
