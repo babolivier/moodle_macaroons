@@ -76,24 +76,51 @@ class auth_plugin_macaroons extends auth_plugin_base {
 		if(!empty($_COOKIE[$this->config->cookie_name])) {
 			try {
 				$m = Macaroon::deserialize($_COOKIE[$this->config->cookie_name]);
+
+				$callbacks = array();
+
+				if(!empty($this->config->caveat1_condition)) {
+					array_push($callbacks, function($a) {
+						return !strcmp($a, $this->config->caveat1_condition);
+					});
+				}
+				if(!empty($this->config->caveat2_condition)) {
+					array_push($callbacks, function($a) {
+						return !strcmp($a, $this->config->caveat2_condition);
+					});
+				}
+				if(!empty($this->config->caveat3_condition)) {
+					array_push($callbacks, function($a) {
+						return !strcmp($a, $this->config->caveat3_condition);
+					});
+				}
+
 				$v = new Verifier();
-				$v->setCallbacks([
-					function($a) {
-						return !strcmp($a, "status = student");
-					}
-				]);
+				$v->setCallbacks($callbacks);
 
 				if($v->verify($m, $this->config->secret)) {
-					$name = explode(";", $m->getIdentifier());
-					$login = join("", $name);
+					$identifier = explode(";", $m->getIdentifier());
+					$parsed_id = $this->parse_identifier($identifier);
+					if(empty($parsed_id["username"])) {
+						$login = $parsed_id["firstname"].$parsed_id["lastname"];
+					} else {
+						$login = $parsed_id["username"];
+					}
 					$user = authenticate_user_login($login, null);
 
 					if($user) {
-						$user->firstname = $name[0];
-						$user->lastname = $name[1];
-						$user->email = preg_replace($placeholders, $name, $this->config->email_config);
+						if(!empty($parsed_id["firstname"])) {
+							$user->firstname = $parsed_id["firstname"];
+						}
+						if(!empty($parsed_id["lastname"])) {
+							$user->lastname = $parsed_id["lastname"];
+						}
+						$user->email = preg_replace($placeholders, [
+							$parsed_id["firstname"],
+							$parsed_id["lastname"]
+						], $this->config->email_config);
 						$DB->update_record('user', $user);
-						
+						var_dump($user);
 						complete_user_login($user);
 						redirect($CFG->wwwroot);
 					}
@@ -102,6 +129,31 @@ class auth_plugin_macaroons extends auth_plugin_base {
 				$message = $e->getMessage();
 			}
 		}
+	}
+
+	function parse_identifier($identifier) {
+		$placeholders = explode(";", $this->config->identifier_format);
+
+		$parsed_id = array();
+
+		// Check if the identifier has the same number of fields as configured
+		if(sizeof($placeholders) != sizeof($identifier)) {
+			// Returning an empty array as the return value is expected to be
+			// an array
+			return $parsed_id;
+		}
+
+		if(is_numeric($index = array_search("{{username}}", $placeholders))) {
+			$parsed_id["username"] = $identifier[$index];
+		}
+		if(is_numeric($index = array_search("{{firstname}}", $placeholders))) {
+			$parsed_id["firstname"] = $identifier[$index];
+		}
+		if(is_numeric($index = array_search("{{lastname}}", $placeholders))) {
+			$parsed_id["lastname"] = $identifier[$index];
+		}
+
+		return $parsed_id;
 	}
 
 	/**
@@ -206,18 +258,38 @@ class auth_plugin_macaroons extends auth_plugin_base {
 	 */
 	function process_config($config) {
 		if(!isset($config->cookie_name)) {
-			$config->cookie_name = '';
+			$config->cookie_name = 'das-macaroon';
 		}
 		if(!isset($config->secret)) {
-			$config->secret = '';
+			$config->secret = 'pocsecret';
+		}
+		if(!isset($config->identifier_format)) {
+			$config->identifier_format = '{{firstname}};{{lastname}}';
 		}
 		if(!isset($config->email_config)) {
-			$config->email_config = '';
+			$config->email_config = '{{firstname}}.{{lastname}}@company.tld';
 		}
+		// Caveats
+		if(!isset($config->caveat1_condition)) {
+				$config->caveat1_condition = '';
+		}
+		if(!isset($config->caveat2_condition)) {
+				$config->caveat2_condition = '';
+		}
+		if(!isset($config->caveat3_condition)) {
+				$config->caveat3_condition = '';
+		}
+
 
 		set_config('cookie_name', $config->cookie_name, self::COMPONENT_NAME);
 		set_config('secret', $config->secret, self::COMPONENT_NAME);
+		set_config('identifier_format', $config->identifier_format, self::COMPONENT_NAME);
 		set_config('email_config', $config->email_config, self::COMPONENT_NAME);
+		// Caveats
+		set_config('caveat1_condition', $config->caveat1_condition, self::COMPONENT_NAME);
+		set_config('caveat2_condition', $config->caveat2_condition, self::COMPONENT_NAME);
+		set_config('caveat3_condition', $config->caveat3_condition, self::COMPONENT_NAME);
+
 		return true;
 	}
 

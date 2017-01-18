@@ -1,12 +1,25 @@
 <?php
 	if(!isset($config->cookie_name)) {
-		$config->cookie_name = '';
+		$config->cookie_name = 'das-macaroon';
 	}
 	if(!isset($config->secret)) {
-		$config->secret = '';
+		$config->secret = 'pocsecret';
+	}
+	if(!isset($config->identifier_format)) {
+		$config->identifier_format = '{{firstname}};{{lastname}}';
 	}
 	if(!isset($config->email_config)) {
-		$config->email_config = '';
+		$config->email_config = '{{firstname}}.{{lastname}}@company.tld';
+	}
+	// Caveats
+	if(!isset($config->caveat1_condition)) {
+		$config->caveat1_condition = '';
+	}
+	if(!isset($config->caveat2_condition)) {
+		$config->caveat2_condition = '';
+	}
+	if(!isset($config->caveat3_condition)) {
+		$config->caveat3_condition = '';
 	}
 ?>
 <table cellspacing="0" cellpadding="5" border="0">
@@ -35,6 +48,16 @@
 	</tr>
 	<tr>
 		<td align="right">
+			<label for="identifier_format">Identifier format</label>
+		</td>
+		<td>
+			<input name="identifier_format" id="identifier_format" type="text" size="50" value="<?php echo $config->identifier_format; ?>" />
+		</td>
+		<td>Your Macaroon's identifier format. Available placeholders are {{username}}, {{firstname}}, {{lastname}}. Elements must me delimited with semicolons (";").<br />
+eg: {{firstname}};{{lastname}}</td>
+	</tr>
+	<tr>
+		<td align="right">
 			<label for="email_config">E-mail template</label>
 		</td>
 		<td>
@@ -42,5 +65,32 @@
 		</td>
 		<td>Template for emails. Available placeholders are {{firstname}} and {{lastname}}.<br />
 eg: {{firstname}}.{{lastname}}@company.tld</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<label for="caveat1_condition">First caveat condition</label>
+		</td>
+		<td>
+			<input name="caveat1_condition" id="caveat1_condition" type="text" size="50" value="<?php echo $config->caveat1_condition; ?>" />
+		</td>
+		<td>The condition in your macaroon's first caveat (optional)</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<label for="caveat2_condition">Second caveat condition</label>
+		</td>
+		<td>
+			<input name="caveat2_condition" id="caveat2_condition" type="text" size="50" value="<?php echo $config->caveat2_condition; ?>" />
+		</td>
+		<td>The condition in your macaroon's second caveat (optional)</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<label for="caveat3_condition">Third caveat condition</label>
+		</td>
+		<td>
+			<input name="caveat3_condition" id="caveat3_condition" type="text" size="50" value="<?php echo $config->caveat3_condition; ?>" />
+		</td>
+		<td>The condition in your macaroon's third caveat (optional)</td>
 	</tr>
 </table>
