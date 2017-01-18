@@ -131,6 +131,13 @@ class auth_plugin_macaroons extends auth_plugin_base {
 		}
 	}
 
+
+	/*
+	* Parses the macaroon identifier based on the user's config
+	*
+	* @param array $identifier The macaroon identifier split based on the separator
+	* @return array A map linking a field with an user value
+	*/
 	function parse_identifier($identifier) {
 		$placeholders = explode(";", $this->config->identifier_format);
 
