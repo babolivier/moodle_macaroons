@@ -2,23 +2,33 @@
 	if(!isset($config->email_config)) {
 		$config->email_config = '';
 	}
+	if(!isset($config->secret)) {
+		$config->secret = '';
+	}
 ?>
 <table cellspacing="0" cellpadding="5" border="0">
-    <tr>
-        <td colspan="3">
-            <h3>Macaroons configuration</h3>
-        </td>
-    </tr>
-    <tr>
-        <td align="right">
-            <label for="email_config">
-		E-mail template
-            </label>
-        </td>
-        <td>
-		<input name="email_config" id="email_config" type="text" size="50" value="<?php echo $config->email_config; ?>" />
-        </td>
-        <td>Template for emails. Available placeholders are {{firstname}} and {{lastname}}.<br />
+	<tr>
+		<td colspan="3">
+			<h3>Macaroons configuration</h3>
+		</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<label for="secret">Secret</label>
+		</td>
+		<td>
+			<input name="secret" id="secret" type="text" size="50" value="<?php echo $config->secret; ?>" />
+		</td>
+		<td>The secret your macaroon was signed with</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<label for="email_config">E-mail template</label>
+		</td>
+		<td>
+			<input name="email_config" id="email_config" type="text" size="50" value="<?php echo $config->email_config; ?>" />
+		</td>
+		<td>Template for emails. Available placeholders are {{firstname}} and {{lastname}}.<br />
 eg: {{firstname}}.{{lastname}}@company.tld</td>
-    </tr>
+	</tr>
 </table>

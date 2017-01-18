@@ -83,7 +83,7 @@ class auth_plugin_macaroons extends auth_plugin_base {
 					}
 				]);
 
-				if($v->verify($m, "pocsecret")) {
+				if($v->verify($m, $this->config->secret)) {
 					$name = explode(";", $m->getIdentifier());
 					$login = join("", $name);
 					$user = authenticate_user_login($login, null);
@@ -208,8 +208,12 @@ class auth_plugin_macaroons extends auth_plugin_base {
 		if(!isset($config->email_config)) {
 			$config->email_config = '';
 		}
+		if(!isset($config->secret)) {
+			$config->secret = '';
+		}
 
 		set_config('email_config', $config->email_config, self::COMPONENT_NAME);
+		set_config('secret', $config->secret, self::COMPONENT_NAME);
 		return true;
 	}
 
