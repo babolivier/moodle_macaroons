@@ -28,16 +28,16 @@
 			<h3>Macaroons configuration</h3>
 		</td>
 	</tr>
-	<tr>
+	<tr class="required">
 		<td align="right">
 			<label for="cookie_name">Cookie name</label>
 		</td>
 		<td>
-			<input name="cookie_name" id="cookie_name" type="text" size="50" value="<?php echo $config->cookie_name; ?>" />
+			<input name="cookie_name" id="cookie_name" type="text" size="50" value="<?php echo $config->cookie_name; ?>" required="true" />
 		</td>
 		<td>Name of the cookie your macaroon is located in.</td>
 	</tr>
-	<tr>
+	<tr class="required">
 		<td align="right">
 			<label for="secret">Secret</label>
 		</td>
@@ -46,22 +46,22 @@
 		</td>
 		<td>The secret your macaroon was signed with</td>
 	</tr>
-	<tr>
+	<tr class="required">
 		<td align="right">
 			<label for="identifier_format">Identifier format</label>
 		</td>
 		<td>
-			<input name="identifier_format" id="identifier_format" type="text" size="50" value="<?php echo $config->identifier_format; ?>" />
+			<input name="identifier_format" id="identifier_format" type="text" size="50" value="<?php echo $config->identifier_format; ?>" required="true" />
 		</td>
 		<td>Your Macaroon's identifier format. Available placeholders are {{username}}, {{firstname}}, {{lastname}}. Elements must me delimited with semicolons (";").<br />
 eg: {{firstname}};{{lastname}}</td>
 	</tr>
-	<tr>
+	<tr class="required">
 		<td align="right">
 			<label for="email_config">E-mail template</label>
 		</td>
 		<td>
-			<input name="email_config" id="email_config" type="text" size="50" value="<?php echo $config->email_config; ?>" />
+			<input name="email_config" id="email_config" type="text" size="50" value="<?php echo $config->email_config; ?>" required="true" />
 		</td>
 		<td>Template for emails. Available placeholders are {{firstname}} and {{lastname}}.<br />
 eg: {{firstname}}.{{lastname}}@company.tld</td>
