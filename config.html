@@ -30,67 +30,65 @@
 	</tr>
 	<tr class="required">
 		<td align="right">
-			<label for="cookie_name">Cookie name</label>
+			<label for="cookie_name"><?php print_string('cookie_name_label', 'auth_macaroons'); ?></label>
 		</td>
 		<td>
 			<input name="cookie_name" id="cookie_name" type="text" size="50" value="<?php echo $config->cookie_name; ?>" required="true" />
 		</td>
-		<td>Name of the cookie your macaroon is located in.</td>
+		<td><?php print_string('cookie_name_help', 'auth_macaroons'); ?></td>
 	</tr>
 	<tr class="required">
 		<td align="right">
-			<label for="secret">Secret</label>
+			<label for="secret"><?php print_string('secret_label', 'auth_macaroons'); ?></label>
 		</td>
 		<td>
 			<input name="secret" id="secret" type="text" size="50" value="<?php echo $config->secret; ?>" />
 		</td>
-		<td>The secret your macaroon was signed with</td>
+		<td><?php print_string('secret_help', 'auth_macaroons'); ?></td>
 	</tr>
 	<tr class="required">
 		<td align="right">
-			<label for="identifier_format">Identifier format</label>
+			<label for="identifier_format"><?php print_string('identifier_format_label', 'auth_macaroons'); ?></label>
 		</td>
 		<td>
 			<input name="identifier_format" id="identifier_format" type="text" size="50" value="<?php echo $config->identifier_format; ?>" required="true" />
 		</td>
-		<td>Your Macaroon's identifier format. Available placeholders are {{username}}, {{firstname}}, {{lastname}}. Elements must me delimited with semicolons (";").<br />
-eg: {{firstname}};{{lastname}}</td>
+		<td><?php print_string('identifier_format_help', 'auth_macaroons'); ?></td>
 	</tr>
 	<tr class="required">
 		<td align="right">
-			<label for="email_config">E-mail template</label>
+			<label for="email_config"><?php print_string('email_config_label', 'auth_macaroons'); ?></label>
 		</td>
 		<td>
 			<input name="email_config" id="email_config" type="text" size="50" value="<?php echo $config->email_config; ?>" required="true" />
 		</td>
-		<td>Template for emails. Available placeholders are {{firstname}} and {{lastname}}.<br />
-eg: {{firstname}}.{{lastname}}@company.tld</td>
+		<td><?php print_string('email_config_help', 'auth_macaroons'); ?></td>
 	</tr>
 	<tr>
 		<td align="right">
-			<label for="caveat1_condition">First caveat condition</label>
+			<label for="caveat1_condition"><?php print_string('caveat1_condition_label', 'auth_macaroons'); ?></label>
 		</td>
 		<td>
 			<input name="caveat1_condition" id="caveat1_condition" type="text" size="50" value="<?php echo $config->caveat1_condition; ?>" />
 		</td>
-		<td>The condition in your macaroon's first caveat (optional)</td>
+		<td><?php print_string('caveat1_condition_help', 'auth_macaroons'); ?></td>
 	</tr>
 	<tr>
 		<td align="right">
-			<label for="caveat2_condition">Second caveat condition</label>
+			<label for="caveat2_condition"><?php print_string('caveat2_condition_label', 'auth_macaroons'); ?></label>
 		</td>
 		<td>
 			<input name="caveat2_condition" id="caveat2_condition" type="text" size="50" value="<?php echo $config->caveat2_condition; ?>" />
 		</td>
-		<td>The condition in your macaroon's second caveat (optional)</td>
+		<td><?php print_string('caveat2_condition_help', 'auth_macaroons'); ?></td>
 	</tr>
 	<tr>
 		<td align="right">
-			<label for="caveat3_condition">Third caveat condition</label>
+			<label for="caveat3_condition"><?php print_string('caveat3_condition_label', 'auth_macaroons'); ?></label>
 		</td>
 		<td>
 			<input name="caveat3_condition" id="caveat3_condition" type="text" size="50" value="<?php echo $config->caveat3_condition; ?>" />
 		</td>
-		<td>The condition in your macaroon's third caveat (optional)</td>
+		<td><?php print_string('caveat3_condition_help', 'auth_macaroons'); ?></td>
 	</tr>
 </table>
