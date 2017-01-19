@@ -76,14 +76,16 @@ class auth_plugin_macaroons extends auth_plugin_base {
 	*/
 	function loginpage_hook() {
 		global $DB, $login, $CFG;
-		$placeholders[0] = "/{{firstname}}/";
-		$placeholders[1] = "/{{lastname}}/";
+
 		if(!empty($_COOKIE[$this->config->cookie_name])) {
 			try {
+				// Getting the macaroon from the cookie it's stored in
 				$m = Macaroon::deserialize($_COOKIE[$this->config->cookie_name]);
 
 				$callbacks = array();
 
+				// Defining the callbacks according to the plugin's configuration
+				// in order to check all caveats
 				if(!empty($this->config->caveat1_condition)) {
 					array_push($callbacks, function($a) {
 						return !strcmp($a, $this->config->caveat1_condition);
@@ -103,6 +105,8 @@ class auth_plugin_macaroons extends auth_plugin_base {
 				$v = new Verifier();
 				$v->setCallbacks($callbacks);
 
+				// This will check both the signature and the caveats. Both must be OK
+				// in order to continue
 				if($v->verify($m, $this->config->secret)) {
 					$identifier = explode(";", $m->getIdentifier());
 					$parsed_id = $this->parse_identifier($identifier);
@@ -111,6 +115,10 @@ class auth_plugin_macaroons extends auth_plugin_base {
 					} else {
 						$login = $parsed_id["username"];
 					}
+
+					// Checking if the user is accepted by at least one authentication
+					// method (ours should accept it), and retrieving the user's class
+					// This will create the user if it doesn't exist
 					$user = authenticate_user_login($login, null);
 
 					if($user) {
@@ -120,17 +128,25 @@ class auth_plugin_macaroons extends auth_plugin_base {
 						if(!empty($parsed_id["lastname"])) {
 							$user->lastname = $parsed_id["lastname"];
 						}
+
+						// Generating the user's e-mail address according
+						// to its name and the config's template
+						$placeholders[0] = "/{{firstname}}/";
+						$placeholders[1] = "/{{lastname}}/";
 						$user->email = preg_replace($placeholders, [
 							$parsed_id["firstname"],
 							$parsed_id["lastname"]
 						], $this->config->email_config);
+						// Register modifications in DB, and logging the user in
 						$DB->update_record('user', $user);
-						var_dump($user);
 						complete_user_login($user);
+						// Authentication is OK, let's redirect the user out of
+						// the login page
 						redirect($CFG->wwwroot);
 					}
 				}
 			} catch(Exception $e) {
+				// We currently do nothing with exceptions
 				$message = $e->getMessage();
 			}
 		}
@@ -155,6 +171,7 @@ class auth_plugin_macaroons extends auth_plugin_base {
 			return $parsed_id;
 		}
 
+		// Filling the fields
 		if(is_numeric($index = array_search("{{username}}", $placeholders))) {
 			$parsed_id["username"] = $identifier[$index];
 		}
